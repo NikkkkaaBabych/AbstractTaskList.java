@@ -47,37 +47,20 @@ public class Task {
         }
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public boolean isActive() {
         return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     public boolean isRepeated() {
         return (interval != 0 ? true : false);
     }
 
-    public int getTime() {
-        return (interval != 0 ? start : time);
+    public String getTitle() {
+        return title;
     }
 
-    public void setTime(int time) throws IllegalArgumentException{
-        if (time < 0){
-            throw new IllegalArgumentException();
-        } else {
-            interval = 0;
-            this.time = time;
-        }
+    public int getTime() {
+        return (interval != 0 ? start : time);
     }
 
     public int getStartTime() {
@@ -90,6 +73,23 @@ public class Task {
 
     public int getRepeatInterval() {
         return (interval != 0 ? interval : 0);
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public void setTime(int time) throws IllegalArgumentException{
+        if (time < 0){
+            throw new IllegalArgumentException();
+        } else {
+            interval = 0;
+            this.time = time;
+        }
     }
 
     public void setTime(int start, int end, int interval) throws IllegalArgumentException{
