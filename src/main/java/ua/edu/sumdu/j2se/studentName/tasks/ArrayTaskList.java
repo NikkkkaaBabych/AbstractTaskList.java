@@ -10,6 +10,18 @@ public class ArrayTaskList {
         size = 0;
         array = new Task [stepForNewArray];
     }
+    public int getSize() {//– метод, що повертає кількість задач у списку.
+        return size;
+    }
+
+    public Task getTask(int index) throws IndexOutOfBoundsException{//– метод, що повертає задачу, яка знаходиться на вказаному
+        // місці у списку, перша задача має індекс 0.
+        if (index < 0 || index > size - 1) {
+            throw new IndexOutOfBoundsException();
+        } else {
+            return array[index];
+        }
+    }
 
     public void add(Task task) throws Exception{//– метод, що додає до списку вказану задачу.
         if (task == null) {
@@ -26,9 +38,22 @@ public class ArrayTaskList {
         }
     }
 
-    public boolean remove(String title, int time, int start, int end, int interval) {//– метод, що видаляє задачу зі списку і повертає істину, якщо
-        //така задача була у списку. Якщо у списку було декілька таких задач, необхідно видалити
-        //одну будь-яку.
+    public boolean remove(Task task) {
+        for(int i = 0; i < size; i ++){
+            if (array[i] == task){
+                int newsize = size - 1;
+                Task [] newarray = new Task [size - 1];
+                System.arraycopy(array, 0, newarray, 0, i);
+                System.arraycopy(array, i + 1, newarray, i, size - i - 1);
+                size = newsize;
+                array = newarray;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean remove(String title, int time, int start, int end, int interval) {
         for(int i = 0; i < size; i ++){
             if (array[i].getTitle() == title &
                     array[i].getTime() == time &
@@ -48,18 +73,6 @@ public class ArrayTaskList {
         return false;
     }
 
-    public int getSize() {//– метод, що повертає кількість задач у списку.
-        return size;
-    }
-
-    public Task getTask(int index) throws IndexOutOfBoundsException{//– метод, що повертає задачу, яка знаходиться на вказаному
-        // місці у списку, перша задача має індекс 0.
-        if (index < 0 || index > size - 1) {
-            throw new IndexOutOfBoundsException();
-        } else {
-            return array[index];
-        }
-    }
 
     public ArrayTaskList incoming(int from, int to) throws IllegalArgumentException{
         if (from < 0 || to < 0 || from > to){
