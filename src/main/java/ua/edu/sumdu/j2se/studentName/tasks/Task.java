@@ -31,7 +31,20 @@ public class Task {
             interval = 0;
         }
     }
-/**
+
+    public boolean equals(@org.jetbrains.annotations.NotNull Task task) {
+        if(getTitle() == task.title &
+                getTime() == task.time &
+                getStartTime() == task.start &
+                getEndTime() == task.end &
+                getRepeatInterval() == task.interval) {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
  * constructor for task which is repeate
  */
     public Task(String title, int start, int end, int interval) throws IllegalArgumentException{
