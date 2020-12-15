@@ -1,11 +1,15 @@
 package ua.edu.sumdu.j2se.studentName.tasks;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.Objects;
+
 /**
  * class for make tasks
  * have title and time or times of doing
  * can be deactivated and activated
  */
-public class Task {
+public class Task implements Cloneable{
     private String title;
     private int time;
     private int start;
@@ -45,8 +49,8 @@ public class Task {
     }
 
     /**
- * constructor for task which is repeate
- */
+     * constructor for task which is repeate
+     */
     public Task(String title, int start, int end, int interval) throws IllegalArgumentException{
         if (start < 0 || end < 0 || interval < 0){
             throw new IllegalArgumentException();
@@ -146,4 +150,54 @@ public class Task {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "title='" + title + '\'' +
+                ", time=" + time +
+                ", start=" + start +
+                ", end=" + end +
+                ", interval=" + interval +
+                ", active=" + active +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        if (!isRepeated())
+            return time == task.time &&
+                    active == task.active &&
+                    title.equals(task.title);
+        else
+            return  start == task.start &&
+                    end == task.end &&
+                    interval == task.interval &&
+                    active == task.active &&
+                    title.equals(task.title);
+    }
+
+    @Override
+    public int hashCode() {
+        if (!isRepeated()){
+            return Objects.hash(title,time);
+        } else {
+            return Objects.hash(title,start,end,interval);
+        }
+    }
+
+    @Override
+    public Task clone() {
+        try {
+            Task newTask = (Task) super.clone();
+            return newTask;
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError();
+        }
+    }
+
+
 }
