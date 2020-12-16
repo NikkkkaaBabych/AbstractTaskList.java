@@ -2,6 +2,11 @@ package ua.edu.sumdu.j2se.studentName.tasks;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.chrono.ChronoPeriod;
+import java.time.temporal.ChronoField;
 import java.util.Objects;
 
 /**
@@ -9,50 +14,38 @@ import java.util.Objects;
  * have title and time or times of doing
  * can be deactivated and activated
  */
-public class Task implements Cloneable{
+public class Task implements Cloneable {
     private String title;
-    private int time;
-    private int start;
-    private int end;
+    private LocalDateTime time;
+    private LocalDateTime start;
+    private LocalDateTime end;
     private int interval;
     private boolean active;
 
     /**
      * constructof for 1-time task
+     *
      * @param title is name
-     * @param time 1-time
+     * @param time  1-time
      * @throws IllegalArgumentException if time<0
      */
-    public Task(String title, int time) throws IllegalArgumentException{
-        if (time < 0){
+    public Task(String title, LocalDateTime time) throws IllegalArgumentException {
+        if( time == null || title == null )
             throw new IllegalArgumentException();
-        } else {
-            this.title = title;
-            this.time = time;
-            this.start = time;
-            this.end = time;
-            active = false;
-            interval = 0;
-        }
+        this.title = title;
+        this.time = time;
+        this.start = time;
+        this.end = time;
+        active = false;
+        interval = 0;
     }
 
-    public boolean equals(@org.jetbrains.annotations.NotNull Task task) {
-        if(getTitle() == task.title &
-                getTime() == task.time &
-                getStartTime() == task.start &
-                getEndTime() == task.end &
-                getRepeatInterval() == task.interval) {
-            return true;
-        }else{
-            return false;
-        }
-    }
 
     /**
      * constructor for task which is repeate
      */
-    public Task(String title, int start, int end, int interval) throws IllegalArgumentException{
-        if (start < 0 || end < 0 || interval < 0){
+    public Task(String title, LocalDateTime start, LocalDateTime end, int interval) throws IllegalArgumentException {
+        if (interval < 0) {
             throw new IllegalArgumentException();
         } else {
             this.title = title;
@@ -76,15 +69,15 @@ public class Task implements Cloneable{
         return title;
     }
 
-    public int getTime() {
+    public LocalDateTime getTime() {
         return (interval != 0 ? start : time);
     }
 
-    public int getStartTime() {
+    public LocalDateTime getStartTime() {
         return (interval != 0 ? start : time);
     }
 
-    public int getEndTime() {
+    public LocalDateTime getEndTime() {
         return (interval != 0 ? end : time);
     }
 
@@ -100,17 +93,14 @@ public class Task implements Cloneable{
         this.active = active;
     }
 
-    public void setTime(int time) throws IllegalArgumentException{
-        if (time < 0){
-            throw new IllegalArgumentException();
-        } else {
-            interval = 0;
-            this.time = time;
-        }
+    public void setTime(LocalDateTime time) throws IllegalArgumentException {
+        interval = 0;
+        this.time = time;
+
     }
 
-    public void setTime(int start, int end, int interval) throws IllegalArgumentException{
-        if (start < 0 || end < 0 || interval < 0){
+    public void setTime(LocalDateTime start, LocalDateTime end, int interval) throws IllegalArgumentException {
+        if (interval < 0) {
             throw new IllegalArgumentException();
         } else {
             this.start = start;
@@ -121,34 +111,38 @@ public class Task implements Cloneable{
 
     /**
      * mothod geta time "current" and find next time for doing active task
+     *
      * @param current time (type int) after which find next
      * @return
      * @throws IllegalArgumentException
      */
-    public int nextTimeAfter(int current) throws IllegalArgumentException{
-        if (current < 0){
-            throw new IllegalArgumentException();
-        } else {
-            if (interval == 0 & isActive()) {
-                return ((time > current) ? time : -1);
-            } else if (interval != 0 & isActive()) {
-                if (current < start) {
-                    return start;
-                }
-                if (current > end) {
-                    return -1;
-                }
-                int repeatNumberAfter = (current - start) / interval + 1;
-                int timeAfter = start + interval * repeatNumberAfter;
-                if (timeAfter < end) {
-                    return timeAfter;
-                } else {
-                    return -1;
-                }
-            } else {
-                return -1;
+    public LocalDateTime nextTimeAfter(LocalDateTime current) throws IllegalArgumentException {
+
+        if (interval == 0 & isActive()) {
+            return time.isAfter(current) ? time : null;
+        } else if (interval != 0 & isActive()) {
+            if (current.isBefore(start)) {
+                return start;
             }
+            if (current.isAfter(end)) {
+                return null;
+            }
+            Long repeatNumberAfter = (long) ((current.toEpochSecond(ZoneOffset.UTC) - start.toEpochSecond(ZoneOffset.UTC)) / ((double)interval) + 1);
+
+            LocalDateTime timeAfter = start.plusSeconds( interval * repeatNumberAfter);
+            if ( timeAfter.isBefore(end) || timeAfter.equals(end)) {
+                return timeAfter;
+            } else {
+                return null;
+            }
+        } else {
+            return null;
         }
+
+    }
+
+    private long dateToSeconds(LocalDateTime time){
+        return time.getLong(ChronoField.INSTANT_SECONDS);
     }
 
     @Override
@@ -169,12 +163,12 @@ public class Task implements Cloneable{
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
         if (!isRepeated())
-            return time == task.time &&
+            return time.equals(task.time) &&
                     active == task.active &&
                     title.equals(task.title);
         else
-            return  start == task.start &&
-                    end == task.end &&
+            return start.equals(task.start) &&
+                    end.equals(task.end) &&
                     interval == task.interval &&
                     active == task.active &&
                     title.equals(task.title);
@@ -182,10 +176,10 @@ public class Task implements Cloneable{
 
     @Override
     public int hashCode() {
-        if (!isRepeated()){
-            return Objects.hash(title,time);
+        if (!isRepeated()) {
+            return Objects.hash(title, time);
         } else {
-            return Objects.hash(title,start,end,interval);
+            return Objects.hash(title, start, end, interval);
         }
     }
 

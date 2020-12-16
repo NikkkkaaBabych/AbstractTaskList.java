@@ -1,5 +1,6 @@
 package ua.edu.sumdu.j2se.studentName.tasks;
 
+import java.time.LocalDateTime;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
@@ -27,22 +28,12 @@ public abstract class AbstractTaskList implements Iterable{
 
     public abstract boolean remove(Task wasteTask);
 
-    public abstract Stream<Task> getStream();
-
-    public final AbstractTaskList incoming(int from, int to) throws IllegalArgumentException{
-        if (from < 0 || to < 0 || from > to){
+    public final AbstractTaskList incoming(LocalDateTime from, LocalDateTime to) throws IllegalArgumentException{
+        if (from.isAfter(to)){
             throw new IllegalArgumentException();
         }
-        return this.getStream().filter(
-                (Task task) -> task.getEndTime() > from &&
-                task.nextTimeAfter(from) <= to &&
-                task.nextTimeAfter(from) != -1 &&
-                task.isActive()
-        ).collect(
-                () -> this.getObj(), (list, task)->list.add(task) , (list1, list2)-> list1.addAll(list2)
-        );
 
-        /*AbstractTaskList listForIncomingTasks = this.getObj();
+/*            AbstractTaskList listForIncomingTasks = this.getObj();
             for (int i = 0; i < this.getSize(); i++) {
                 Task task = this.getTask(i);
                 if (task.getEndTime() > from &
@@ -56,32 +47,15 @@ public abstract class AbstractTaskList implements Iterable{
                 } else {
                     continue;
                 }
+
+
             }
         return listForIncomingTasks;*/
+        return this.getStream().filter((Task task) -> task.getEndTime().isAfter(from) &&
+                task.nextTimeAfter(from).isBefore(to) &&
+                task.nextTimeAfter(from) != null && task.isActive()).collect( () -> this.getObj(), (list, item)->list.add(item) , (list1, list2)-> list1.addAll(list2));
     }
 
-    /*public AbstractTaskList incoming2  (int from, int to, AbstractTaskList taskList) throws IllegalArgumentException{
-        if (from < 0 || to < 0 || from > to){
-            throw new IllegalArgumentException();
-        } else {
-            for (int i = 0; i < taskList.getSize(); i++) {
-                Task task = taskList.getTask(i);
-                if (task.getEndTime() > from &
-                        task.nextTimeAfter(from) <= to &
-                        task.nextTimeAfter(from) != -1) {
-                    try {
-                        this.add(task);
-                    } catch (Exception ex){
-                        continue;
-                    }
-                } else {
-                    continue;
-                }
-            }
-            return this;
-        }
-    }*/
-
-
+    public abstract Stream<Task> getStream();
 
 }
