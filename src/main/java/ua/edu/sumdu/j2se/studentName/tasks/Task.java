@@ -2,6 +2,7 @@ package ua.edu.sumdu.j2se.studentName.tasks;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -14,7 +15,7 @@ import java.util.Objects;
  * have title and time or times of doing
  * can be deactivated and activated
  */
-public class Task implements Cloneable {
+public class Task implements Cloneable , Serializable {
     private String title;
     private LocalDateTime time;
     private LocalDateTime start;

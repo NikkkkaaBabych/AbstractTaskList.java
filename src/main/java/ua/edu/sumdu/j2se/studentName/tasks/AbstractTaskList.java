@@ -1,10 +1,11 @@
 package ua.edu.sumdu.j2se.studentName.tasks;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
-public abstract class AbstractTaskList implements Iterable{
+public abstract class AbstractTaskList implements Iterable , Serializable {
 
     public AbstractTaskList(){}
 

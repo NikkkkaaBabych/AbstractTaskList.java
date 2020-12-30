@@ -1,9 +1,9 @@
 package ua.edu.sumdu.j2se.studentName.tasks;
 
-        import java.time.LocalDateTime;
-        import java.time.ZoneId;
-        import java.time.ZoneOffset;
-        import java.util.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.*;
 
 public class Tasks {
 
